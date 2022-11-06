@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creature</title>
+  </head>
+
+  <style>
+    #canvas1 {
+      position: absolute;
+      background: black;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+  <body>
+    <canvas id="canvas1"></canvas>
+    <script>
+      const canvas = document.getElementById('canvas1');
+      const ctx = canvas.getContext('2d');
+      console.log(ctx);
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      let drawing = false;
+
+      class Root {
+        constructor(x, y) {
+          this.x = x;
+          this.y = y;
+          this.speedX = Math.random() * 4 - 2;
+          this.speedY = Math.random() * 4 - 2;
+          this.maxSize = Math.random() * 7 + 5;
+          this.size = Math.random() * 1 + 2;
+          this.vs = Math.random() * 0.2 + 0.05;
+          this.angle = Math.random() * 6.2;
+          this.va = Math.random() * 0.6 - 0.3;
+          this.lightness = 10;
+        }
+        update() {
+          this.x += this.speedX + Math.sin(this.angle);
+          this.y += this.speedY;
+          this.angle += this.va;
+          this.size += this.vs;
+          if (this.lightness < 80) this.lightness += 0.5;
+          if (this.size < this.maxSize) {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fillStyle = 'hsl(151,100%,' + this.lightness + '%)';
+            ctx.fill();
+            ctx.stroke();
+            requestAnimationFrame(this.update.bind(this));
+          }
+        }
+      }
+      window.addEventListener('mousemove', function(e) {
+        if (drawing) {
+          const root = new Root(e.x, e.y);
+          root.update();
+        }
+      });
+
+      window.addEventListener('mousedown', function() {
+        drawing = true;
+      });
+      window.addEventListener('mouseup', function() {
+        drawing = false;
+      });
+    </script>
+  </body>
+</html>
